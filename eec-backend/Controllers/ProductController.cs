@@ -1,7 +1,6 @@
-﻿using eec_backend.Data;
-using eec_backend.Models;
+﻿using eec_backend.Models;
+using eec_backend.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace eec_backend.Controllers
 {
@@ -9,92 +8,54 @@ namespace eec_backend.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly ProductContext _context;
+        private readonly IProductService _productService;
 
-        public ProductController(ProductContext context)        {
-            _context = context;
+        public ProductController(IProductService productService)        {
+            _productService = productService;
         }
 
-        // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            return await _context.Products.ToListAsync();
+            List<Product> products = await _productService.GetAllProducts();
+            return Ok(products);
         }
 
-        // GET: api/Products/{modelIdentifier}
         [HttpGet("{modelIdentifier}")]
         public async Task<ActionResult<Product>> GetProduct(string modelIdentifier)
         {
-            var product = await _context.Products.FindAsync(modelIdentifier);
+            Product product = await _productService.GetProductById(modelIdentifier);
 
             if (product == null)
             {
-                return NotFound();
+                return StatusCode(StatusCodes.Status404NotFound, "Product with given identifier does not exist in database");
             }
 
-            return product;
+            return Ok(product);
         }
 
-        // PUT: api/Products/{modelIdentifier}
         [HttpPut("{modelIdentifier}")]
-        public async Task<IActionResult> PutProduct(string modelIdentifier, Product product)
+        public async Task<IActionResult> UpdateProduct(string modelIdentifier, Product product)
         {
-            if (modelIdentifier != product.ModelIdentifier)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(product).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(modelIdentifier))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return await _productService.UpdateProduct(modelIdentifier, product)
+                ? Ok()
+                : StatusCode(StatusCodes.Status500InternalServerError, "An error occured, check application logs for more details");
         }
 
-        // POST: api/Products
         [HttpPost]
-        public async Task<ActionResult<Product>> PostTodoItem(Product product)
+        public async Task<ActionResult<Product>> SaveProduct(Product product)
         {
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetProduct), new { modelIdentifier = product.ModelIdentifier }, product);
+            return await _productService.SaveProduct(product)
+                ? Ok()
+                : StatusCode(StatusCodes.Status500InternalServerError, "An error occured, check application logs for more details");
         }
 
-        // DELETE: api/Products/{modelIdentifier}
         [HttpDelete("{modelIdentifier}")]
         public async Task<IActionResult> DeleteProduct(string modelIdentifier)
         {
-            var product = await _context.Products.FindAsync(modelIdentifier);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool ProductExists(string modelIdentifier)
-        {
-            return _context.Products.Any(e => e.ModelIdentifier == modelIdentifier);
+            return await _productService.DeleteProduct(modelIdentifier)
+                 ? Ok()
+                 : StatusCode(StatusCodes.Status500InternalServerError, "An error occured, check application logs for more details");
         }
     }
 }

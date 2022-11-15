@@ -1,4 +1,5 @@
 using eec_backend.Data;
+using eec_backend.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,10 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddLogging();
 
 // For testing purposes
-builder.Services.AddDbContext<ProductContext>(opt =>
-    opt.UseInMemoryDatabase("Eec"));
+builder.Services.AddDbContext<ProductContext>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

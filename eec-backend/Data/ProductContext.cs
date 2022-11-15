@@ -5,17 +5,12 @@ namespace eec_backend.Data
 {
     public class ProductContext : DbContext
     {
-        public ProductContext(DbContextOptions<ProductContext> options)
-           : base(options)
+        public DbSet<Product> Products { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
+            string connectionString = @"Server=sql.bsite.net\MSSQL2016;Initial Catalog=zarpatu_eec; User ID=zarpatu_eec; Password=eecteam123;Trust Server Certificate=true";
+            options.UseSqlServer(connectionString);
         }
-
-        /* Connection with sql server */
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlServer(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Api;Integrated Security=True;");
-        //}
-
-        public DbSet<Product> Products { get; set; } = null!;
     }
 }

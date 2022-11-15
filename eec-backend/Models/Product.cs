@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace eec_backend.Models
 {
@@ -8,30 +10,45 @@ namespace eec_backend.Models
         [Key]
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [JsonProperty("modelIdentifier")]
         public string? ModelIdentifier { get; set; }
 
         [Required]
-        public string? SupplierOrTrademark { get; set; }
+        [JsonProperty("supplier")]
+        public string SupplierOrTrademark { get; set; } = null!;
 
         [Required]
-        public string? Category { get; set; }
+        [JsonProperty("category")]
+        public string Category { get; set; } = null!;
 
+        [JsonProperty("dimensionWidth", NullValueHandling = NullValueHandling.Ignore)]
         public double? DimensionWidth { get; set; }
 
+        [JsonProperty("dimensionHeight", NullValueHandling = NullValueHandling.Ignore)]
         public double? DimensionHeight { get; set; }
 
+        [JsonProperty("dimensionDeptht", NullValueHandling = NullValueHandling.Ignore)]
         public double? DimensionDeptht { get; set; }
 
-        public string? EnergyEfficiencyClass { get; set; }
+        [Required]
+        [JsonProperty("energyEfficiencyClass")]
+        public string EnergyEfficiencyClass { get; set; } = null!;
 
+        [Required]
+        [JsonProperty("energyEfficiencyIndex")]
         public double EnergyEfficiencyIndex { get; set; }
 
+        [JsonProperty("designType", NullValueHandling = NullValueHandling.Ignore)]
         public string? DesignType { get; set; }
 
+        [Required]
+        [JsonProperty("energyConsumption")]
         public double EnergyConsumption { get; set; }
 
-        public string? EnergySource { get; set; }
+        [JsonProperty("energySource", NullValueHandling = NullValueHandling.Ignore)]
+        public string? EnergySource { get; set; } = null!;
 
+        [JsonProperty("ratedCapacity", NullValueHandling = NullValueHandling.Ignore)]
         public double? RatedCapacity { get; set; }
     }
 }
