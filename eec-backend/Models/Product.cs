@@ -27,8 +27,8 @@ namespace eec_backend.Models
         [JsonProperty("dimensionHeight", NullValueHandling = NullValueHandling.Ignore)]
         public double? DimensionHeight { get; set; }
 
-        [JsonProperty("dimensionDeptht", NullValueHandling = NullValueHandling.Ignore)]
-        public double? DimensionDeptht { get; set; }
+        [JsonProperty("dimensionDepth", NullValueHandling = NullValueHandling.Ignore)]
+        public double? DimensionDepth { get; set; }
 
         [Required]
         [JsonProperty("energyEfficiencyClass")]
