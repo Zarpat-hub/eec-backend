@@ -45,6 +45,9 @@ namespace eec_backend.Models
         [JsonProperty("energyConsumption")]
         public double EnergyConsumption { get; set; }
 
+        [JsonProperty("waterConsumption", NullValueHandling = NullValueHandling.Ignore)]
+        public double WaterConsumption { get; set; }
+
         [JsonProperty("energySource", NullValueHandling = NullValueHandling.Ignore)]
         public string? EnergySource { get; set; } = null!;
 
