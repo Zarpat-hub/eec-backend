@@ -11,7 +11,7 @@ namespace eec_backend.Models
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [JsonProperty("modelIdentifier")]
-        public string? ModelIdentifier { get; set; }
+        public string ModelIdentifier { get; set; } = null!;
 
         [Required]
         [JsonProperty("supplier")]
@@ -46,10 +46,10 @@ namespace eec_backend.Models
         public double EnergyConsumption { get; set; }
 
         [JsonProperty("waterConsumption", NullValueHandling = NullValueHandling.Ignore)]
-        public double WaterConsumption { get; set; }
+        public double? WaterConsumption { get; set; }
 
         [JsonProperty("energySource", NullValueHandling = NullValueHandling.Ignore)]
-        public string? EnergySource { get; set; } = null!;
+        public string? EnergySource { get; set; }
 
         [JsonProperty("ratedCapacity", NullValueHandling = NullValueHandling.Ignore)]
         public double? RatedCapacity { get; set; }
