@@ -33,7 +33,7 @@ namespace eec_backend.Services
         private double GetAnnualCost(Product product, BaseRequest request)
         {
             Enum category = GetCategoryEnum(product);
-            if (category is CategoriesEnum.OVEN || category is CategoriesEnum.WASHING_MASHINE || category is CategoriesEnum.DISHWASHER)
+            if (category is CategoriesEnum.OVEN || category is CategoriesEnum.WASHING_MACHINE || category is CategoriesEnum.DISHWASHER)
             {
                 if (request.WeeklyCycles == null)
                 {
@@ -56,7 +56,7 @@ namespace eec_backend.Services
                 "refrigeratingappliances2019" => CategoriesEnum.REFRIGERATOR,
                 "ovens" => CategoriesEnum.OVEN,
                 "airconditioners" => CategoriesEnum.AIR_CONDITIONER,
-                "washingmachines2019" => CategoriesEnum.WASHING_MASHINE,
+                "washingmachines2019" => CategoriesEnum.WASHING_MACHINE,
                 "dishwashers2019" => CategoriesEnum.DISHWASHER,
                 _ => throw new NotSupportedException($"Given category ${product.Category} is not currently supported"),
             };
@@ -67,7 +67,7 @@ namespace eec_backend.Services
             REFRIGERATOR,
             OVEN,
             AIR_CONDITIONER,
-            WASHING_MASHINE,
+            WASHING_MACHINE,
             DISHWASHER
         }
     }
