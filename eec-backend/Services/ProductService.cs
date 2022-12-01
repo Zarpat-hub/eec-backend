@@ -31,7 +31,7 @@ namespace eec_backend.Services
 
         public async Task<Product> GetProductById(string modelIdentifier)
         {
-            return await _context.Products.FindAsync(modelIdentifier);
+            return await _context.Products.FindAsync(modelIdentifier.Replace("%2F", "/"));
         }
 
         public async Task<bool> SaveProduct(Product product)
