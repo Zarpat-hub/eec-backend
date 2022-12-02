@@ -54,10 +54,10 @@ namespace eec_backend.Services
         {
             double score = GetCategoryEnum(product) switch
             {
-                CategoriesEnum.REFRIGERATOR => 1 - ((Math.Clamp(product.EnergyEfficiencyIndex, 41, 125) - 41) / (125 - 41)),
-                CategoriesEnum.OVEN => 1 - ((Math.Clamp(product.EnergyEfficiencyIndex, 45, 159) - 45) / (159 - 45)),
+                CategoriesEnum.REFRIGERATOR => 1 - ((Math.Clamp(product.EnergyEfficiencyIndex, 44, 125) - 44) / (125 - 44)),
+                CategoriesEnum.OVEN => 1 - ((Math.Clamp(product.EnergyEfficiencyIndex, 62, 120) - 62) / (120 - 62)),
                 CategoriesEnum.AIR_CONDITIONER => 1 - ((Math.Clamp(product.EnergyEfficiencyIndex, 2.60, 8.50) - 8.50) / (2.60 - 8.50)),
-                CategoriesEnum.WASHING_MACHINE => 1 - ((Math.Clamp(product.EnergyEfficiencyIndex, 52, 102) - 52) / (102 - 52)),
+                CategoriesEnum.WASHING_MACHINE => 1 - ((Math.Clamp(product.EnergyEfficiencyIndex, 52, 92) - 52) / (92 - 52)),
                 CategoriesEnum.DISHWASHER => 1 - ((Math.Clamp(product.EnergyEfficiencyIndex, 32, 62) - 32) / (62 - 32)),
             };
             return Math.Round(score * 100, 3);
