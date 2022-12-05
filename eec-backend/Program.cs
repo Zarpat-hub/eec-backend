@@ -19,7 +19,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 {
-    policy.WithOrigins("https://localhost:5173").AllowAnyHeader().AllowAnyMethod();
+    policy.WithOrigins("https://127.0.0.1:5173").AllowAnyHeader().AllowAnyMethod();
 }));
 
 var app = builder.Build();
