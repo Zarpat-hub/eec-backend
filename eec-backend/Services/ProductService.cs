@@ -11,6 +11,9 @@ namespace eec_backend.Services
         Task<bool> SaveProduct(Product product);
         Task<bool> UpdateProduct(string modelIdentifier, Product product);
         Task<bool> DeleteProduct(string modelIdentifier);
+        Task<IEnumerable<string>> GetCategories();
+        Task<IEnumerable<string>> GetSuppliersForCategory(string category);
+        Task<IEnumerable<string>> GetModelIdentifiersForSupplierInCategory(string category, string supplier);
     }
 
     public class ProductService : IProductService
@@ -87,6 +90,24 @@ namespace eec_backend.Services
             }
 
             return true;
+        }
+
+        public async Task<IEnumerable<string>> GetCategories()
+        {
+            var products = await _context.Set<Product>().ToListAsync();
+            return products.Select(p => p.Category).Distinct();
+        }
+
+        public async Task<IEnumerable<string>> GetSuppliersForCategory(string category)
+        {
+            var products = await _context.Set<Product>().Where(p => p.Category == category).ToListAsync();
+            return products.Select(p => p.SupplierOrTrademark).Distinct();
+        }
+
+        public async Task<IEnumerable<string>> GetModelIdentifiersForSupplierInCategory(string category, string supplier)
+        {
+            var products = await _context.Set<Product>().Where(p => p.Category == category && p.SupplierOrTrademark == supplier).ToListAsync();
+            return products.Select(p => p.ModelIdentifier);
         }
 
         private bool ProductExists(string modelIdentifier)

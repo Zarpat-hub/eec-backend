@@ -57,5 +57,42 @@ namespace eec_backend.Controllers
                  ? Ok()
                  : StatusCode(StatusCodes.Status500InternalServerError, "An error occured, check application logs for more details");
         }
+
+        [HttpGet("categories")]
+        public async Task<ActionResult<IEnumerable<string>>> GetCategories()
+        {
+            return Ok(await _productService.GetCategories());
+        }
+
+        
+        [HttpGet("suppliers/{category}")]
+        public async Task<ActionResult<IEnumerable<string>>> GetSuppliersForCategory(string category)
+        {
+            var categories = await _productService.GetCategories();
+            if (!categories.Contains(category))
+            {
+                return StatusCode(StatusCodes.Status404NotFound, $"Category {category} does not exist.");
+            }
+            return Ok(await _productService.GetSuppliersForCategory(category));
+        }
+
+        
+        [HttpGet("modelIdentifiers/{category}/{supplier}")]
+        public async Task<ActionResult<IEnumerable<string>>> GetModelIdentifiersForSupplierInCategory(string category, string supplier)
+        {
+            var categories = await _productService.GetCategories();
+            if (!categories.Contains(category))
+            {
+                return StatusCode(StatusCodes.Status404NotFound, $"Category {category} does not exist.");
+            }
+
+            var suppliers = await _productService.GetSuppliersForCategory(category);
+            if (!suppliers.Contains(supplier))
+            {
+                return StatusCode(StatusCodes.Status404NotFound, $"Supplier {supplier} does not exist for category {category}.");
+            }
+            return Ok(await _productService.GetModelIdentifiersForSupplierInCategory(category, supplier));
+        }
+        
     }
 }
