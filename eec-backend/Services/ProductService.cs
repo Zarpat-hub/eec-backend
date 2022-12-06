@@ -68,7 +68,7 @@ namespace eec_backend.Services
 
             return true;
         }
-        
+
         public async Task<bool> DeleteProduct(string modelIdentifier)
         {
             if (!ProductExists(modelIdentifier))
@@ -94,20 +94,30 @@ namespace eec_backend.Services
 
         public async Task<IEnumerable<string>> GetCategories()
         {
-            var products = await _context.Set<Product>().ToListAsync();
-            return products.Select(p => p.Category).Distinct();
+            var categories = await _context.Set<Product>()
+                .Select(p => p.Category)
+                .Distinct()
+                .ToListAsync();
+            return categories;
         }
 
         public async Task<IEnumerable<string>> GetSuppliersForCategory(string category)
         {
-            var products = await _context.Set<Product>().Where(p => p.Category == category).ToListAsync();
-            return products.Select(p => p.SupplierOrTrademark).Distinct();
+            var suppliers = await _context.Set<Product>()
+                .Where(p => p.Category == category)
+                .Select(p => p.SupplierOrTrademark)
+                .Distinct()
+                .ToListAsync();
+            return suppliers;
         }
 
         public async Task<IEnumerable<string>> GetModelIdentifiersForSupplierInCategory(string category, string supplier)
         {
-            var products = await _context.Set<Product>().Where(p => p.Category == category && p.SupplierOrTrademark == supplier).ToListAsync();
-            return products.Select(p => p.ModelIdentifier);
+            var modelIdentifiers = await _context.Set<Product>()
+                .Where(p => p.Category == category && p.SupplierOrTrademark == supplier)
+                .Select(p => p.ModelIdentifier)
+                .ToListAsync();
+            return modelIdentifiers;
         }
 
         private bool ProductExists(string modelIdentifier)
