@@ -1,8 +1,10 @@
-﻿namespace eec_backend.Contracts.Responses
+﻿using eec_backend.Models;
+
+namespace eec_backend.Contracts.Responses
 {
     public class BaseResponse
     {
-        public double AnnualCost { get; set; }
-        public double EcoScore { get; set; }
+        public SingleCalculationModel Given { get; set; }
+        public Dictionary<string, List<SingleCalculationModel>> Upgrades { get; set; }
     }
 }

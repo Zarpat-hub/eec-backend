@@ -20,15 +20,52 @@ namespace eec_backend.Services
 
         public async Task<BaseResponse> GetCalculation(BaseRequest baseRequest)
         {
+            
             Product product = await _productService.GetProductById(baseRequest.ModelIdentifier);
-
-            BaseResponse baseResponse = new()
+            BaseResponse response = new BaseResponse();
+            response.Given = new SingleCalculationModel()
             {
                 AnnualCost = GetAnnualCost(product, baseRequest),
                 EcoScore = GetEcoScore(product),
+                Class = product.EnergyEfficiencyClass,
+                Category = product.Category,
+                Index = product.EnergyEfficiencyIndex,
+                Manufacturer = product.SupplierOrTrademark,
+                ModelIdentifier = product.ModelIdentifier
             };
             
-            return baseResponse;
+            var recc = ReccommendedProducts(product);
+            Dictionary<string, List<SingleCalculationModel>> upgrades = new();
+
+            foreach(var item in recc)
+            {
+                upgrades.Add(item.Key, new List<SingleCalculationModel>
+                    (item.Value.Select(x => new SingleCalculationModel()
+                    {
+                        AnnualCost = GetAnnualCost(x, baseRequest),
+                        EcoScore = GetEcoScore(x),
+                        Class = x.EnergyEfficiencyClass,
+                        Category = x.Category,
+                        Index = x.EnergyEfficiencyIndex,
+                        Manufacturer = x.SupplierOrTrademark,
+                        ModelIdentifier = x.ModelIdentifier
+                    })).ToList());
+            }
+
+            response.Upgrades = upgrades;
+
+            return response;
+        }
+        
+        private Dictionary<string, List<Product>> ReccommendedProducts(Product product)
+        {
+            IEnumerable<Product> allProducts = _productService.GetAllProducts().Result;
+            var reccommendations = allProducts
+                .Where(p => p.Category == product.Category && GetProductsWithBetterEnergyClass(allProducts, product).Contains(p))
+                .GroupBy(p => p.EnergyEfficiencyClass[..1])
+                .ToDictionary(p => p.Key, p => p.OrderBy(x => x.EnergyEfficiencyIndex).Take(3).ToList());
+                
+            return reccommendations;
         }
 
         private double GetAnnualCost(Product product, BaseRequest request)
@@ -83,6 +120,15 @@ namespace eec_backend.Services
             AIR_CONDITIONER,
             WASHING_MACHINE,
             DISHWASHER
+        }
+
+        private IEnumerable<Product> GetProductsWithBetterEnergyClass(IEnumerable<Product> products, Product givenProduct)
+        {
+            string[] classesByAlphabetical = { "A", "B", "C", "D", "E", "F", "G" };
+            Index givenProductEnergyClassIndex = Array.IndexOf(classesByAlphabetical, givenProduct.EnergyEfficiencyClass);
+            var slice = classesByAlphabetical[..givenProductEnergyClassIndex];
+            IEnumerable<Product> betterClassesProducts = products.Where(p => slice.Contains(p.EnergyEfficiencyClass));
+            return betterClassesProducts;
         }
     }
 }
