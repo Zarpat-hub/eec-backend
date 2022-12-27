@@ -125,7 +125,7 @@ namespace eec_backend.Services
         private IEnumerable<Product> GetProductsWithBetterEnergyClass(IEnumerable<Product> products, Product givenProduct)
         {
             string[] classesByAlphabetical = { "A", "B", "C", "D", "E", "F", "G" };
-            Index givenProductEnergyClassIndex = Array.IndexOf(classesByAlphabetical, givenProduct.EnergyEfficiencyClass);
+            Index givenProductEnergyClassIndex = Array.IndexOf(classesByAlphabetical, givenProduct.EnergyEfficiencyClass[..1]);
             var slice = classesByAlphabetical[..givenProductEnergyClassIndex];
             IEnumerable<Product> betterClassesProducts = products.Where(p => slice.Contains(p.EnergyEfficiencyClass));
             return betterClassesProducts;
