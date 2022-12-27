@@ -10,7 +10,7 @@ namespace eec_backend.Data
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             string connectionString = @"Server=sql.bsite.net\MSSQL2016;Initial Catalog=zarpatu_eec; User ID=zarpatu_eec; Password=eecteam123;Trust Server Certificate=true";
-            options.UseSqlServer(connectionString);
+            options.UseSqlServer(connectionString).LogTo(Console.WriteLine, LogLevel.Information).EnableSensitiveDataLogging();
         }
     }
 }
