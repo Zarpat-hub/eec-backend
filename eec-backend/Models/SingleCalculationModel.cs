@@ -1,10 +1,8 @@
-﻿using eec_backend.Models;
-
-namespace eec_backend.Contracts.Responses
+﻿namespace eec_backend.Models
 {
-    public class BaseResponse
+    public class SingleCalculationModel
     {
-        public string ModelIdentifier { get; set; } //Thanks for this code to frontend mocks :)
+        public string ModelIdentifier { get; set; }
         public string DeviceName { get; set; }
         public double AnnualCost { get; set; }
         public string EnergyEfficiencyClass { get; set; }
@@ -12,6 +10,5 @@ namespace eec_backend.Contracts.Responses
         public string Category { get; set; }
         public double PowerConsumption { get; set; }
         public string Manufacturer { get; set; }
-        public Dictionary<string, List<SingleCalculationModel>> Upgrades { get; set; }
     }
 }

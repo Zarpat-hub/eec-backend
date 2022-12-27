@@ -1,6 +1,7 @@
 ﻿using eec_backend.Contracts;
 using eec_backend.Contracts.Responses;
 using eec_backend.Models;
+using System.Linq;
 
 namespace eec_backend.Services
 {
@@ -20,15 +21,51 @@ namespace eec_backend.Services
 
         public async Task<BaseResponse> GetCalculation(BaseRequest baseRequest)
         {
-            Product product = await _productService.GetProductById(baseRequest.ModelIdentifier);
-
-            BaseResponse baseResponse = new()
-            {
-                AnnualCost = GetAnnualCost(product, baseRequest),
-                EcoScore = GetEcoScore(product),
-            };
             
-            return baseResponse;
+            Product product = await _productService.GetProductById(baseRequest.ModelIdentifier);
+            BaseResponse response = new BaseResponse();
+            response.AnnualCost = GetAnnualCost(product, baseRequest);
+            response.EcoScore = GetEcoScore(product);
+            response.EnergyEfficiencyClass = product.EnergyEfficiencyClass;
+            response.Category = product.Category;
+            response.Manufacturer = product.SupplierOrTrademark;
+            response.PowerConsumption = product.EnergyConsumption;
+            response.ModelIdentifier = product.ModelIdentifier;
+            response.DeviceName = baseRequest.DeviceName;
+            
+            var recc = RecommendedProducts(product);
+            Dictionary<string, List<SingleCalculationModel>> upgrades = new();
+
+            foreach(var item in recc)
+            {
+                upgrades.Add(item.Key, new List<SingleCalculationModel>
+                    (item.Value.Select(x => new SingleCalculationModel()
+                    {
+                        AnnualCost = GetAnnualCost(x, baseRequest),
+                        EcoScore = GetEcoScore(x),
+                        EnergyEfficiencyClass = x.EnergyEfficiencyClass,
+                        Category = x.Category,
+                        Manufacturer = x.SupplierOrTrademark,
+                        ModelIdentifier = x.ModelIdentifier,
+                        PowerConsumption = x.EnergyConsumption,
+                        DeviceName = $"{baseRequest.DeviceName}_Upgraded"
+                    })).ToList());
+            }
+
+            response.Upgrades = upgrades;
+
+            return response;
+        }
+        
+        private Dictionary<string, List<Product>> RecommendedProducts(Product product)
+        {
+            IEnumerable<Product> allProductsInCategory = _productService.GetAllProducts().Result.Where(p => p.Category == product.Category);
+            var reccommendations = allProductsInCategory
+                .Where(p => GetSimilarParametersProducts(allProductsInCategory, product).Contains(p) && GetProductsWithBetterEnergyClass(allProductsInCategory, product).Contains(p))
+                .GroupBy(p => p.EnergyEfficiencyClass[..1])
+                .ToDictionary(p => p.Key, p => p.OrderBy(x => x.EnergyEfficiencyIndex).Take(3).ToList());
+                
+            return reccommendations;
         }
 
         private double GetAnnualCost(Product product, BaseRequest request)
@@ -83,6 +120,47 @@ namespace eec_backend.Services
             AIR_CONDITIONER,
             WASHING_MACHINE,
             DISHWASHER
+        }
+
+        private IEnumerable<Product> GetProductsWithBetterEnergyClass(IEnumerable<Product> products, Product givenProduct)
+        {
+            string[] classesByAlphabetical = { "A", "B", "C", "D", "E", "F", "G" };
+            Index givenProductEnergyClassIndex = Array.IndexOf(classesByAlphabetical, givenProduct.EnergyEfficiencyClass[..1]);
+            var slice = classesByAlphabetical[..givenProductEnergyClassIndex];
+            IEnumerable<Product> betterClassesProducts = products.Where(p => slice.Contains(p.EnergyEfficiencyClass));
+            return betterClassesProducts;
+        }
+
+        private IEnumerable<Product> GetSimilarParametersProducts(IEnumerable<Product> products, Product givenProduct)
+        {
+            CategoriesEnum categoriesEnum = GetCategoryEnum(givenProduct);
+
+            return categoriesEnum switch
+            {
+                CategoriesEnum.REFRIGERATOR => products.Where(p => p.DesignType == givenProduct.DesignType && CheckDimensionsSimilarity(givenProduct, p)),
+                CategoriesEnum.OVEN => products.Where(p => p.EnergySource == givenProduct.EnergySource),
+                CategoriesEnum.AIR_CONDITIONER => products.Where(p => p.EnergyConsumption <= givenProduct.EnergyConsumption),
+                CategoriesEnum.WASHING_MACHINE => products.Where(p => p.DesignType == givenProduct.DesignType && CheckDimensionsSimilarity(givenProduct, p)),
+                CategoriesEnum.DISHWASHER => products.Where(p => p.DesignType == givenProduct.DesignType && CheckDimensionsSimilarity(givenProduct, p))
+            };
+
+            bool CheckDimensionsSimilarity(Product givenProduct, Product productToCompare)
+            {
+                if
+                (
+                    givenProduct.DimensionWidth - 10 > productToCompare.DimensionWidth ||
+                    givenProduct.DimensionWidth + 10 < productToCompare.DimensionWidth ||
+                    givenProduct.DimensionHeight - 10 > productToCompare.DimensionHeight ||
+                    givenProduct.DimensionHeight + 10 < productToCompare.DimensionHeight ||
+                    givenProduct.DimensionDepth - 10 > productToCompare.DimensionDepth ||
+                    givenProduct.DimensionDepth + 10 > productToCompare.DimensionDepth
+                )
+                {
+                    return false;
+                }
+
+                return true;
+            }
         }
     }
 }
