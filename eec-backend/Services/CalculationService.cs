@@ -33,7 +33,7 @@ namespace eec_backend.Services
             response.ModelIdentifier = product.ModelIdentifier;
             response.DeviceName = baseRequest.DeviceName;
             
-            var recc = ReccommendedProducts(product);
+            var recc = RecommendedProducts(product);
             Dictionary<string, List<SingleCalculationModel>> upgrades = new();
 
             foreach(var item in recc)
@@ -57,7 +57,7 @@ namespace eec_backend.Services
             return response;
         }
         
-        private Dictionary<string, List<Product>> ReccommendedProducts(Product product)
+        private Dictionary<string, List<Product>> RecommendedProducts(Product product)
         {
             IEnumerable<Product> allProductsInCategory = _productService.GetAllProducts().Result.Where(p => p.Category == product.Category);
             var reccommendations = allProductsInCategory
