@@ -81,10 +81,10 @@ namespace eec_backend.Services
                 double cost = (double)(product.EnergyConsumption * request.WeeklyCycles * 4 * 12 * request.EnergyPrice);
                 cost += (double)(product.WaterConsumption != null ? (product.WaterConsumption/1000.0) * request.WeeklyCycles * 4 * 12 * request.WaterPrice : 0);
 
-                return cost;
+                return Math.Floor(cost);
             }
 
-            return product.EnergyConsumption * request.EnergyPrice;
+            return Math.Floor(product.EnergyConsumption * request.EnergyPrice);
         }
 
         private double GetEcoScore(Product product)

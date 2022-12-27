@@ -20,6 +20,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 {
     policy.WithOrigins("https://127.0.0.1:5173").AllowAnyHeader().AllowAnyMethod();
+    policy.WithOrigins("https://eec-ui.netlify.app").AllowAnyHeader().AllowAnyMethod();
 }));
 
 var app = builder.Build();
