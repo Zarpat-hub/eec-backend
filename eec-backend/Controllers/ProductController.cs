@@ -1,6 +1,7 @@
 ﻿using eec_backend.Models;
 using eec_backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using static eec_backend.Services.ProductService;
 
 namespace eec_backend.Controllers
 {
@@ -61,38 +62,58 @@ namespace eec_backend.Controllers
         [HttpGet("categories")]
         public async Task<ActionResult<IEnumerable<string>>> GetCategories()
         {
-            return Ok(await _productService.GetCategories());
+            try
+            {
+                var categories = await _productService.GetCategories();
+                return Ok(categories);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving categories.");
+            }
         }
 
-        
+
         [HttpGet("suppliers/{category}")]
         public async Task<ActionResult<IEnumerable<string>>> GetSuppliersForCategory(string category)
         {
-            var categories = await _productService.GetCategories();
-            if (!categories.Contains(category))
+            try
             {
-                return StatusCode(StatusCodes.Status404NotFound, $"Category {category} does not exist.");
+                var suppliers = await _productService.GetSuppliersForCategory(category);
+                return Ok(suppliers);
             }
-            return Ok(await _productService.GetSuppliersForCategory(category));
+            catch (CategoryNotFoundException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving suppliers.");
+            }
         }
 
-        
+
         [HttpGet("modelIdentifiers/{category}/{supplier}")]
         public async Task<ActionResult<IEnumerable<string>>> GetModelIdentifiersForSupplierInCategory(string category, string supplier)
         {
-            var categories = await _productService.GetCategories();
-            if (!categories.Contains(category))
+            try
             {
-                return StatusCode(StatusCodes.Status404NotFound, $"Category {category} does not exist.");
+                var modelIdentifiers = await _productService.GetModelIdentifiersForSupplierInCategory(category, supplier);
+                return Ok(modelIdentifiers);
             }
-
-            var suppliers = await _productService.GetSuppliersForCategory(category);
-            if (!suppliers.Contains(supplier))
+            catch (CategoryNotFoundException ex)
             {
-                return StatusCode(StatusCodes.Status404NotFound, $"Supplier {supplier} does not exist for category {category}.");
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
             }
-            return Ok(await _productService.GetModelIdentifiersForSupplierInCategory(category, supplier));
+            catch (SupplierNotFoundException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving model identifiers.");
+            }
         }
-        
+
     }
 }

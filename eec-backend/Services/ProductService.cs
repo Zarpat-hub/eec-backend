@@ -94,31 +94,98 @@ namespace eec_backend.Services
 
         public async Task<IEnumerable<string>> GetCategories()
         {
-            var categories = await _context.Set<Product>()
+            try
+            {
+                var categories = await _context.Set<Product>()
                 .Select(p => p.Category)
                 .Distinct()
                 .ToListAsync();
-            return categories;
+                return categories;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving categories.");
+                throw;
+            }
         }
 
         public async Task<IEnumerable<string>> GetSuppliersForCategory(string category)
         {
-            var suppliers = await _context.Set<Product>()
-                .Where(p => p.Category == category)
-                .Select(p => p.SupplierOrTrademark)
+            try
+            {
+                var categories = await _context.Set<Product>()
+                .Select(p => p.Category)
                 .Distinct()
                 .ToListAsync();
-            return suppliers;
+                if (!categories.Contains(category))
+                {
+                    throw new CategoryNotFoundException($"Category {category} does not exist.");
+                }
+
+                var suppliers = await _context.Set<Product>()
+                    .Where(p => p.Category == category)
+                    .Select(p => p.SupplierOrTrademark)
+                    .Distinct()
+                    .ToListAsync();
+                return suppliers;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving suppliers.");
+                throw;
+            }
         }
+
+        public class CategoryNotFoundException : Exception
+        {
+            public CategoryNotFoundException(string message) : base(message)
+            { }
+        }
+
 
         public async Task<IEnumerable<string>> GetModelIdentifiersForSupplierInCategory(string category, string supplier)
         {
-            var modelIdentifiers = await _context.Set<Product>()
-                .Where(p => p.Category == category && p.SupplierOrTrademark == supplier)
-                .Select(p => p.ModelIdentifier)
+            try
+            {
+                var categories = await _context.Set<Product>()
+                .Select(p => p.Category)
+                .Distinct()
                 .ToListAsync();
-            return modelIdentifiers;
+                if (!categories.Contains(category))
+                {
+                    throw new CategoryNotFoundException($"Category {category} does not exist.");
+                }
+
+                var suppliers = await _context.Set<Product>()
+                    .Where(p => p.Category == category)
+                    .Select(p => p.SupplierOrTrademark)
+                    .Distinct()
+                    .ToListAsync();
+
+                if (!suppliers.Contains(supplier))
+                {
+                    throw new SupplierNotFoundException($"Supplier {supplier} does not exist for category {category}.");
+                }
+
+                var modelIdentifiers = await _context.Set<Product>()
+                    .Where(p => p.Category == category && p.SupplierOrTrademark == supplier)
+                    .Select(p => p.ModelIdentifier)
+                    .ToListAsync();
+                return modelIdentifiers;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving model identifiers.");
+                throw;
+            }
         }
+
+        public class SupplierNotFoundException : Exception
+        {
+            public SupplierNotFoundException(string message) : base(message)
+            { }
+        }
+
 
         private bool ProductExists(string modelIdentifier)
         {
