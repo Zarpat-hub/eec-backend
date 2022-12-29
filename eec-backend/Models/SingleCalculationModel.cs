@@ -3,7 +3,7 @@
     public class SingleCalculationModel
     {
         public string ModelIdentifier { get; set; }
-        public string DeviceName { get; set; }
+        public string DeviceName { get; set; } = "MyDevice";
         public double AnnualCost { get; set; }
         public string EnergyEfficiencyClass { get; set; }
         public double EcoScore { get; set; }
