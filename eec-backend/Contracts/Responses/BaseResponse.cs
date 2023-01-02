@@ -5,7 +5,7 @@ namespace eec_backend.Contracts.Responses
     public class BaseResponse
     {
         public string ModelIdentifier { get; set; } //Thanks for this code to frontend mocks :)
-        public string DeviceName { get; set; }
+        public string DeviceName { get; set; } = "MyDevice";
         public double AnnualCost { get; set; }
         public string EnergyEfficiencyClass { get; set; }
         public double EcoScore { get; set; }

@@ -31,7 +31,11 @@ namespace eec_backend.Services
             response.Manufacturer = product.SupplierOrTrademark;
             response.PowerConsumption = product.EnergyConsumption;
             response.ModelIdentifier = product.ModelIdentifier;
-            response.DeviceName = baseRequest.DeviceName;
+            
+            if (!string.IsNullOrEmpty(baseRequest.DeviceName))
+            {
+                response.DeviceName = baseRequest.DeviceName;
+            }
             
             var recc = RecommendedProducts(product);
             Dictionary<string, List<SingleCalculationModel>> upgrades = new();

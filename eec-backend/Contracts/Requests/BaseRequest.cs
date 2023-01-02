@@ -8,7 +8,7 @@ namespace eec_backend.Contracts
         [JsonProperty]
         public string ModelIdentifier { get; set; } = null!;
         [JsonProperty]
-        public string DeviceName { get; set; } = "MyDevice";
+        public string DeviceName { get; set; }
         [JsonProperty]
         public double EnergyPrice { get; set; } = 0.77f;
         [JsonProperty]
