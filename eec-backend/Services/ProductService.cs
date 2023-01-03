@@ -1,5 +1,4 @@
 ﻿using eec_backend.Data;
-using eec_backend.Extensions;
 using eec_backend.Models;
 using Microsoft.EntityFrameworkCore;
 
