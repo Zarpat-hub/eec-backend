@@ -1,4 +1,5 @@
 ﻿using eec_backend.Data;
+using eec_backend.Extensions;
 using eec_backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -96,16 +97,34 @@ namespace eec_backend.Services
         {
             try
             {
-                var categories = await _context.Set<Product>()
+                var categoriesFromDb = await _context.Set<Product>()
                 .Select(p => p.Category)
                 .Distinct()
+                .ToCategoriesDictionary()
                 .ToListAsync();
-                return categories;
+                return ToFormattedCategories(categoriesFromDb);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving categories.");
                 throw;
+            }
+
+            List<string> ToFormattedCategories(List<string> categoriesFromDb)
+            {
+                Dictionary<string, string> categoryDictionary = new Dictionary<string, string>
+                {
+                    ["refrigeratingappliances2019"] = "Refrigerators",
+                    ["airconditioners"] = "Air Conditioners",
+                    ["washingmachines2019"] = "Washing Machines",
+                    ["ovens"] = "Ovens",
+                    ["dishwashers2019"] = "Dish Washers"
+                };
+
+                List<string> formattedCategories = new();
+                Array.ForEach(categoriesFromDb.ToArray(), (category) => formattedCategories.Add(categoryDictionary[category] ?? category));
+
+                return formattedCategories;
             }
         }
 
