@@ -121,7 +121,7 @@ namespace eec_backend.Services
                 };
 
                 List<string> formattedCategories = new();
-                Array.ForEach(categoriesFromDb.ToArray(), (category) => formattedCategories.Add(categoryDictionary[category]));
+                Array.ForEach(categoriesFromDb.ToArray(), (category) => formattedCategories.Add(categoryDictionary.TryGetValue(category, out var name) ? name : category));
 
                 return formattedCategories;
             }
