@@ -100,7 +100,6 @@ namespace eec_backend.Services
                 var categoriesFromDb = await _context.Set<Product>()
                 .Select(p => p.Category)
                 .Distinct()
-                .ToCategoriesDictionary()
                 .ToListAsync();
                 return ToFormattedCategories(categoriesFromDb);
             }
@@ -122,7 +121,7 @@ namespace eec_backend.Services
                 };
 
                 List<string> formattedCategories = new();
-                Array.ForEach(categoriesFromDb.ToArray(), (category) => formattedCategories.Add(categoryDictionary[category] ?? category));
+                Array.ForEach(categoriesFromDb.ToArray(), (category) => formattedCategories.Add(categoryDictionary[category]));
 
                 return formattedCategories;
             }
