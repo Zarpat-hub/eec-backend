@@ -116,7 +116,7 @@ namespace eec_backend.Services
                     ["airconditioners"] = "Air Conditioners",
                     ["washingmachines2019"] = "Washing Machines",
                     ["ovens"] = "Ovens",
-                    ["dishwashers2019"] = "Dish Washers"
+                    ["dishwashers2019"] = "Dishwashers"
                 };
 
                 List<string> formattedCategories = new();
@@ -134,6 +134,17 @@ namespace eec_backend.Services
                 .Select(p => p.Category)
                 .Distinct()
                 .ToListAsync();
+
+                category = category switch
+                {
+                    "Refrigerators" => "refrigeratingappliances2019",
+                    "Air Conditioners" => "airconditioners",
+                    "Washing Machines" => "washingmachines2019",
+                    "Ovens" => "ovens",
+                    "Dishwashers" => "dishwashers2019",
+                     _ => throw new NotSupportedException($"Given category ${category} is not currently supported"),
+                };
+
                 if (!categories.Contains(category))
                 {
                     throw new CategoryNotFoundException($"Category {category} does not exist.");
@@ -168,6 +179,17 @@ namespace eec_backend.Services
                 .Select(p => p.Category)
                 .Distinct()
                 .ToListAsync();
+
+                category = category switch
+                {
+                    "Refrigerators" => "refrigeratingappliances2019",
+                    "Air Conditioners" => "airconditioners",
+                    "Washing Machines" => "washingmachines2019",
+                    "Ovens" => "ovens",
+                    "Dishwashers" => "dishwashers2019",
+                    _ => throw new NotSupportedException($"Given category ${category} is not currently supported"),
+                };
+
                 if (!categories.Contains(category))
                 {
                     throw new CategoryNotFoundException($"Category {category} does not exist.");
