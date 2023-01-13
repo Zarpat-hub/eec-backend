@@ -141,14 +141,14 @@ namespace eec_backend.Services
 
             return categoriesEnum switch
             {
-                CategoriesEnum.REFRIGERATOR => products.Where(p => p.DesignType == givenProduct.DesignType && CheckDimensionsSimilarity(givenProduct, p)),
+                CategoriesEnum.REFRIGERATOR => products.Where(p => p.DesignType == givenProduct.DesignType),
                 CategoriesEnum.OVEN => products.Where(p => p.EnergySource == givenProduct.EnergySource),
                 CategoriesEnum.AIR_CONDITIONER => products.Where(p => p.EnergyConsumption <= givenProduct.EnergyConsumption),
-                CategoriesEnum.WASHING_MACHINE => products.Where(p => p.DesignType == givenProduct.DesignType && CheckDimensionsSimilarity(givenProduct, p)),
-                CategoriesEnum.DISHWASHER => products.Where(p => p.DesignType == givenProduct.DesignType && CheckDimensionsSimilarity(givenProduct, p))
+                CategoriesEnum.WASHING_MACHINE => products.Where(p => p.DesignType == givenProduct.DesignType),
+                CategoriesEnum.DISHWASHER => products.Where(p => p.DesignType == givenProduct.DesignType)
             };
 
-            bool CheckDimensionsSimilarity(Product givenProduct, Product productToCompare)
+            bool CheckDimensionsSimilarity(Product givenProduct, Product productToCompare) //We can improve this in the future
             {
                 if
                 (
