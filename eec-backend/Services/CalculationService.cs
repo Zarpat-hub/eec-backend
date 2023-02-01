@@ -51,7 +51,7 @@ namespace eec_backend.Services
                         Category = x.Category,
                         Manufacturer = x.SupplierOrTrademark,
                         ModelIdentifier = x.ModelIdentifier,
-                        PowerConsumption = x.EnergyConsumption,
+                        PowerConsumption = (double)(baseRequest.WeeklyCycles != null ? x.EnergyConsumption * baseRequest.WeeklyCycles * 4 * 12 : x.EnergyConsumption),
                         DeviceName = $"{baseRequest.DeviceName}_Upgraded"
                     })).ToList());
             }
@@ -131,7 +131,7 @@ namespace eec_backend.Services
             string[] classesByAlphabetical = { "A", "B", "C", "D", "E", "F", "G" };
             Index givenProductEnergyClassIndex = Array.IndexOf(classesByAlphabetical, givenProduct.EnergyEfficiencyClass[..1]);
             var slice = classesByAlphabetical[..givenProductEnergyClassIndex];
-            IEnumerable<Product> betterClassesProducts = products.Where(p => slice.Contains(p.EnergyEfficiencyClass));
+            IEnumerable<Product> betterClassesProducts = products.Where(p => slice.Contains(p.EnergyEfficiencyClass) && p.EnergyConsumption < givenProduct.EnergyConsumption);
             return betterClassesProducts;
         }
 
