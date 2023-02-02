@@ -141,24 +141,20 @@ namespace eec_backend.Services
 
             return categoriesEnum switch
             {
-                CategoriesEnum.REFRIGERATOR => products.Where(p => p.DesignType == givenProduct.DesignType),
+                CategoriesEnum.REFRIGERATOR => products.Where(p => p.DesignType == givenProduct.DesignType && CheckDimensionsSimilarity(givenProduct, p)),
                 CategoriesEnum.OVEN => products.Where(p => p.EnergySource == givenProduct.EnergySource),
                 CategoriesEnum.AIR_CONDITIONER => products.Where(p => p.EnergyConsumption <= givenProduct.EnergyConsumption),
-                CategoriesEnum.WASHING_MACHINE => products.Where(p => p.DesignType == givenProduct.DesignType),
-                CategoriesEnum.DISHWASHER => products.Where(p => p.DesignType == givenProduct.DesignType)
+                CategoriesEnum.WASHING_MACHINE => products.Where(p => p.DesignType == givenProduct.DesignType && CheckDimensionsSimilarity(givenProduct, p)),
+                CategoriesEnum.DISHWASHER => products.Where(p => p.DesignType == givenProduct.DesignType && CheckDimensionsSimilarity(givenProduct, p))
             };
 
             bool CheckDimensionsSimilarity(Product givenProduct, Product productToCompare) //We can improve this in the future
             {
-                if
-                (
-                    givenProduct.DimensionWidth - 10 > productToCompare.DimensionWidth ||
-                    givenProduct.DimensionWidth + 10 < productToCompare.DimensionWidth ||
-                    givenProduct.DimensionHeight - 10 > productToCompare.DimensionHeight ||
-                    givenProduct.DimensionHeight + 10 < productToCompare.DimensionHeight ||
-                    givenProduct.DimensionDepth - 10 > productToCompare.DimensionDepth ||
-                    givenProduct.DimensionDepth + 10 > productToCompare.DimensionDepth
-                )
+                if (
+                   Math.Abs((double)givenProduct.DimensionWidth - (double)productToCompare.DimensionWidth) > givenProduct.DimensionWidth * 0.1 ||
+                   Math.Abs((double)givenProduct.DimensionHeight - (double)productToCompare.DimensionHeight) > givenProduct.DimensionHeight * 0.1 ||
+                   Math.Abs((double)givenProduct.DimensionDepth - (double)productToCompare.DimensionDepth) > givenProduct.DimensionDepth * 0.1
+                   )
                 {
                     return false;
                 }
