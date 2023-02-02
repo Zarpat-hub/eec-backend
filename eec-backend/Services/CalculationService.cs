@@ -29,7 +29,7 @@ namespace eec_backend.Services
             response.EnergyEfficiencyClass = product.EnergyEfficiencyClass;
             response.Category = product.Category;
             response.Manufacturer = product.SupplierOrTrademark;
-            response.PowerConsumption = product.EnergyConsumption;
+            response.PowerConsumption = (double)(baseRequest.WeeklyCycles != null ? product.EnergyConsumption * baseRequest.WeeklyCycles * 4 * 12 : product.EnergyConsumption);
             response.ModelIdentifier = product.ModelIdentifier;
             
             if (!string.IsNullOrEmpty(baseRequest.DeviceName))
