@@ -151,9 +151,9 @@ namespace eec_backend.Services
             bool CheckDimensionsSimilarity(Product givenProduct, Product productToCompare) //We can improve this in the future
             {
                 if (
-                   Math.Abs((double)givenProduct.DimensionWidth - (double)productToCompare.DimensionWidth) > givenProduct.DimensionWidth * 0.1 ||
-                   Math.Abs((double)givenProduct.DimensionHeight - (double)productToCompare.DimensionHeight) > givenProduct.DimensionHeight * 0.1 ||
-                   Math.Abs((double)givenProduct.DimensionDepth - (double)productToCompare.DimensionDepth) > givenProduct.DimensionDepth * 0.1
+                   Math.Abs((double)givenProduct.DimensionWidth - (double)productToCompare.DimensionWidth) > givenProduct.DimensionWidth * 0.25 ||
+                   Math.Abs((double)givenProduct.DimensionHeight - (double)productToCompare.DimensionHeight) > givenProduct.DimensionHeight * 0.25 ||
+                   Math.Abs((double)givenProduct.DimensionDepth - (double)productToCompare.DimensionDepth) > givenProduct.DimensionDepth * 0.25
                    )
                 {
                     return false;
